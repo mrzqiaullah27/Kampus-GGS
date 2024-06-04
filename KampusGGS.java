@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.Arrays;
 import java.util.Scanner;
 
 class Edge implements Comparable<Edge> {
@@ -38,3 +38,35 @@ public class KampusGGS {
             subsets[i].parent = find(subsets, subsets[i].parent);
         return subsets[i].parent;
     }
+
+void union(Subset subsets[], int x, int y) {
+        int xroot = find(subsets, x);
+        int yroot = find(subsets, y);
+
+        if (subsets[xroot].rank < subsets[yroot].rank)
+            subsets[xroot].parent = yroot;
+        else if (subsets[xroot].rank > subsets[yroot].rank)
+            subsets[yroot].parent = xroot;
+        else {
+            subsets[yroot].parent = xroot;
+            subsets[xroot].rank++;
+        }
+    }
+
+    void KruskalMST() {
+        Edge result[] = new Edge[V];
+        int e = 0;
+        int i = 0;
+        for (i = 0; i < V; ++i)
+            result[i] = new Edge(0, 0, 0);
+
+        Arrays.sort(edge);
+
+        Subset subsets[] = new Subset[V + 1];
+        for (i = 0; i <= V; ++i)
+            subsets[i] = new Subset();
+
+        for (int v = 1; v <= V; ++v) {
+            subsets[v].parent = v;
+            subsets[v].rank = 0;
+        }
