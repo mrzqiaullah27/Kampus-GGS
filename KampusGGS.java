@@ -94,4 +94,25 @@ void union(Subset subsets[], int x, int y) {
             minimumCost += result[i].weight;
         System.out.println(minimumCost);
     }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNext()) {
+            int V = sc.nextInt();
+            int E = sc.nextInt();
+
+            KampusGGS graph = new KampusGGS(V, E);
+
+            for (int i = 0; i < E; i++) {
+                int src = sc.nextInt();
+                int dest = sc.nextInt();
+                int weight = sc.nextInt();
+                graph.edge[i] = new Edge(src, dest, weight);
+            }
+
+            graph.KruskalMST();
+        }
+        sc.close();
+    }
+}
+
 
