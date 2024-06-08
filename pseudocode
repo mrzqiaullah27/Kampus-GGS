@@ -1,0 +1,92 @@
+class Edge:
+    INPUT src, dest, weight
+    function Edge(src, dest, weight):
+        this.src = src
+        this.dest = dest
+    function compareTo(compareEdge):
+        return this.weight - compareEdge.weight
+
+class Subset:
+    parent, rank
+
+class KampusGGS:
+    INPUT V, E
+    Edge[] edge
+
+    function KampusGGS(v, e):
+        V = v
+        E = e
+        edge = new Edge[E]
+        FOR i = 0 TO e-1 DO // O(E)
+            edge[i] = new Edge(0, 0, 0)
+
+    function find(subsets[], i):
+        IF subsets[i].parent != i THEN // O(log V)
+            subsets[i].parent = find(subsets, subsets[i].parent)
+        RETURN subsets[i].parent
+
+    function union(subsets[], x, y):
+        xroot = find(subsets, x) // O(log V)
+        yroot = find(subsets, y) // O(log V)
+
+        IF subsets[xroot].rank < subsets[yroot].rank THEN // O(1)
+            subsets[xroot].parent = yroot
+        ELSE IF subsets[xroot].rank > subsets[yroot].rank THEN // O(1)
+            subsets[yroot].parent = xroot
+        ELSE // O(1)
+            subsets[yroot].parent = xroot
+            subsets[xroot].rank = subsets[xroot].rank + 1
+
+    function KruskalMST():
+        Edge[] result = new Edge[V]
+        int e = 0
+        int i = 0
+        FOR i = 0 TO V-1 DO // O(V)
+            result[i] = new Edge(0, 0, 0)
+
+        sort(edge) // O(E log E)
+
+        Subset[] subsets = new Subset[V + 1]
+        FOR i = 0 TO V DO // O(V)
+            subsets[i] = new Subset()
+
+        FOR v = 1 TO V DO // O(V)
+            subsets[v].parent = v
+            subsets[v].rank = 0
+        i = 0
+
+        WHILE e < V - 1 DO // O(E)
+            IF i >= E THEN
+                OUTPUT "TIDAK MEMUNGKINKAN"
+                RETURN
+
+            Edge next_edge = edge[i++]
+
+            int x = find(subsets, next_edge.src) // O(log V)
+            int y = find(subsets, next_edge.dest) // O(log V)
+
+            IF x != y THEN
+                result[e++] = next_edge
+                union(subsets, x, y) // O(log V)
+
+        int minimumCost = 0
+        FOR i = 0 TO e-1 DO // O(V)
+            minimumCost += result[i].weight
+        OUTPUT minimumCost
+
+function main():
+    Scanner sc = new Scanner(System.in)
+    WHILE sc.hasNext() DO
+        INPUT V = sc.nextInt()
+        INPUT E = sc.nextInt()
+
+        KampusGGS graph = new KampusGGS(V, E)
+
+        FOR i = 0 TO E-1 DO // O(E)
+            INPUT src = sc.nextInt()
+            INPUT dest = sc.nextInt()
+            INPUT weight = sc.nextInt()
+            graph.edge[i] = new Edge(src, dest, weight)
+
+        graph.KruskalMST() // O(E log E)
+    sc.close()
