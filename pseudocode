@@ -3,6 +3,7 @@ class Edge:
     function Edge(src, dest, weight):
         this.src = src
         this.dest = dest
+        this.weight = weight
     function compareTo(compareEdge):
         return this.weight - compareEdge.weight
 
